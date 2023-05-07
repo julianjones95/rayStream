@@ -1,9 +1,9 @@
-#include "moveRectangle.h"
+#include "movePlayer.h"
 #include <SDL.h>
 #include <math.h>
 #define PI 3.14259265
 
-void moveRectangle (SDL_Rect *playerRect, int resW, int resH, bool upArrowDown, bool downArrowDown, bool leftArrowDown, bool rightArrowDown) {
+void movePlayer (SDL_Rect *playerRect, int resW, int resH, bool upArrowDown, bool downArrowDown, bool leftArrowDown, bool rightArrowDown) {
 
     // Movement Logic    
     if (upArrowDown) {

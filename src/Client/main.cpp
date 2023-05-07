@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SDL.h>
 #include "handleEvent.h"
-#include "moveRectangle.h"
+#include "movePlayer.h"
 #include "variables.h"
 #include "drawRays3D.h"
 #include "drawMap.h"
@@ -17,8 +17,8 @@ int main(int argc, char const *argv[]) {
     SDL_Rect playerRect;
     playerRect.w = 512/64;
     playerRect.h = 512/64;
-    playerRect.x = resW/4 - playerRect.w/2;
-    playerRect.y = resH/2 - playerRect.h/2;
+    playerRect.x = resW/4 - playerRect.w/2;  
+    playerRect.y = resH/2 - playerRect.h/2;  
     
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
@@ -63,15 +63,15 @@ int main(int argc, char const *argv[]) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(renderer);
 
-        // Function to draw the 2d Map
-        drawMap2D(renderer);
-
         // Handle new events
         handleEvent( &appIsRunning, &upArrowDown, &downArrowDown, &leftArrowDown, &rightArrowDown);
 
         // Handle movement of character
-        moveRectangle(&playerRect, resW, resH, upArrowDown, downArrowDown, leftArrowDown, rightArrowDown);
+        movePlayer(&playerRect, resW, resH, upArrowDown, downArrowDown, leftArrowDown, rightArrowDown);
         
+        // Function to draw the 2d Map
+        drawMap2D(renderer);
+
         // Draw the 3D raycast
         drawRays3D(&playerRect, renderer);       
 
