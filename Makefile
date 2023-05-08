@@ -13,19 +13,6 @@ clean:
 
 
 
-# Code to compile old Client
-
-runC: cleanC compileC
-	output/client
-
-compileC:
-	g++ src/Client/old/client.cpp -w -o output/client
-
-cleanC:
-	rm output/client
-
-
-
 #Code to compile the server
 
 runS: cleanS compileS

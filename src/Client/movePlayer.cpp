@@ -7,26 +7,16 @@ void movePlayer (SDL_Rect *playerRect, int resW, int resH, bool upArrowDown, boo
 
     // Movement Logic    
     if (upArrowDown) {
-        playerRect->x += pdx;
-        playerRect->y += pdy;
-        sendPlayerData(true,false);
+        sendPlayerData(playerRect,true,false,&angle,false);
     }
     if (downArrowDown) {
-        playerRect->x -= pdx;
-        playerRect->y -= pdy;
-        sendPlayerData(false,true);
+        sendPlayerData(playerRect,false,true,&angle,false);
     }
     if (leftArrowDown) {
-        angle -= PI/32;
-        if(angle<0){ angle += 2*PI; };
-        pdx = cos(angle)*5;
-        pdy = sin(angle)*5;
+        sendPlayerData(playerRect,false,false,&angle,true);
     }
     if (rightArrowDown) {
-        angle += PI/32;
-        if(angle>2*PI){ angle -= 2*PI; };
-        pdx = cos(angle)*5;
-        pdy = sin(angle)*5;
+        sendPlayerData(playerRect,false,false,&angle,false);
     }
 
     // Bound checking

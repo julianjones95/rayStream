@@ -126,7 +126,7 @@ void drawRays3D(SDL_Rect *playerRect, SDL_Renderer *renderer){
    
     // Draw the 3D Walls
     
-    float diffAngle = rayAngle-angle;
+    float diffAngle = rayAngle - angle;
     if(diffAngle<0) {
         diffAngle += 2*PI;
     }
