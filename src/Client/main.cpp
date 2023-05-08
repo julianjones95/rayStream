@@ -77,7 +77,7 @@ int main(int argc, char const *argv[]) {
 
         SDL_SetRenderDrawColor(renderer, 255, 105, 180, SDL_ALPHA_OPAQUE);
         SDL_RenderFillRect(renderer, &playerRect);
-        SDL_RenderDrawLine(renderer, playerRect.x, playerRect.y, playerRect.x + 10*pdx, playerRect.y+10*pdy);
+//        SDL_RenderDrawLine(renderer, playerRect.x, playerRect.y, playerRect.x + 10*pdx, playerRect.y+10*pdy);
         SDL_RenderPresent(renderer);
         
     }

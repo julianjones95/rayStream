@@ -7,15 +7,19 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <SDL.h>
+#include "variables.h"
+
 
 struct Data {
     float x;
     float y;
+    float angle;
+    float direction;
 };
 
 #define PORT 8080
 
-int sendPlayerData(bool inc, bool dec) {
+int sendPlayerData(SDL_Rect *playerRect, bool inc, bool dec, float * angle, bool direction) {
     int socket_fd;
     struct sockaddr_in serv_addr;
     
@@ -40,21 +44,23 @@ int sendPlayerData(bool inc, bool dec) {
 
     data.x = inc;
     data.y = dec;
-
+    data.direction = direction;
+    // Send data to server here
     sendto(socket_fd, &data, sizeof(data), 0, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
 
-
-
-    // Receieve response from server
 
     struct Data response;
 
     int server_address_len = sizeof(serv_addr);
+    
+
+    // Receieve response from server
     int valread = recvfrom(socket_fd, &response, 1024, 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
-    printf("Rec resp:\n x = %f\n y = %f\n", response.x, response.y);
+    //printf("Rec resp:\n x = %f\n y = %f\n", response.x, response.y);
 
-
-
+    playerRect->x = response.x;
+    playerRect->y = response.y;
+    *angle = response.angle;
     close(socket_fd);
 
     return 0;

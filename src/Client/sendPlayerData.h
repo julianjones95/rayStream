@@ -7,4 +7,4 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-int sendPlayerData(bool, bool);
+int sendPlayerData(SDL_Rect * , bool, bool, float *, bool);
