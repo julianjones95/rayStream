@@ -10,9 +10,7 @@
 struct Data {
     float x;
     float y;
-    float z;
 };
-
 
 #define PORT 8080
 
@@ -41,17 +39,48 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    float positionX = 0;
+    float positionY = 0;
+
+    
+
     while(1) {
         
         struct Data data;
         int valread = recvfrom(socket_fd, &data, sizeof(data), MSG_WAITALL, (struct sockaddr *) &address, (socklen_t*) &addrlen);
-        printf("Received Data:\n x = %f\n y = %f\n z = %f\n", data.x, data.y, data.z);
+        // Print server data receieved
+       // printf("Received Data:\n x = %f\n y = %f\n z = %f\n", data.x, data.y, data.z);
 
-        //float response = buffer +1;
+       
+        // Todo : This logic is working 
+        // but this needs to actually 
+        // control the character
+        // do this next
 
-        // Writes the message
-        //sendto(socket_fd, &response , sizeof(response), 0, (struct sockaddr *) &address, addrlen);
+        // Movement Logic    
+        if (data.x==1 && data.y==0) {
+            positionX++;
+            positionY++;
+        }
+        if (data.x==0 && data.y==1) {
+            positionX--;
+            positionY--;
+        }
+
+
+
+        // Send response to client
+    
+        struct Data response;
+        response.x = positionX; 
+        response.y = positionY;
+
+        struct sockaddr_in client_address = *((struct sockaddr_in *)&address);
+        int client_address_len = sizeof(client_address);
+        sendto(socket_fd, &response, sizeof(response), 0, (struct sockaddr *)&client_address, client_address_len);
+
     }
+
     return 0;
 }
 

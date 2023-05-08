@@ -9,10 +9,12 @@ void movePlayer (SDL_Rect *playerRect, int resW, int resH, bool upArrowDown, boo
     if (upArrowDown) {
         playerRect->x += pdx;
         playerRect->y += pdy;
+        sendPlayerData(true,false);
     }
     if (downArrowDown) {
         playerRect->x -= pdx;
         playerRect->y -= pdy;
+        sendPlayerData(false,true);
     }
     if (leftArrowDown) {
         angle -= PI/32;
