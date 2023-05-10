@@ -20,7 +20,7 @@ runS: cleanS compileS
 	output/server
 
 compileS:
-	g++ src/Server/server.cpp -w -o output/server
+	g++ src/Server/*.cpp -w -o output/server
 
 cleanS:
 	rm output/server
