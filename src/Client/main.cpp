@@ -6,6 +6,7 @@
 #include "variables.h"
 #include "drawRays3D.h"
 #include "drawMap.h"
+#include "drawOtherPlayers.h"
 #define PI 3.14259265
 #define Rad PI/1440 //This is actually an eigth radian
 
@@ -75,9 +76,15 @@ int main(int argc, char const *argv[]) {
         // Draw the 3D raycast
         drawRays3D(&playerRect, renderer);       
 
+        // Draw Our Player
         SDL_SetRenderDrawColor(renderer, 255, 105, 180, SDL_ALPHA_OPAQUE);
         SDL_RenderFillRect(renderer, &playerRect);
-//        SDL_RenderDrawLine(renderer, playerRect.x, playerRect.y, playerRect.x + 10*pdx, playerRect.y+10*pdy);
+        
+        //  Draw Others 
+        // To do: create server logic for this so I can update other players
+        // in realtime.
+        //
+//        drawOtherPlayers(renderer);
         SDL_RenderPresent(renderer);
         
     }
