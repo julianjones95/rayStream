@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SDL.h>
 #include "handleEvent.h"
-#include "movePlayer.h"
+#include "Player.h"
 #include "variables.h"
 #include "drawRays3D.h"
 #include "drawMap.h"
@@ -11,15 +11,16 @@
 #define Rad PI/1440 //This is actually an eigth radian
 
 
-
-
 int main(int argc, char const *argv[]) {
+   
+    Player mainChar;
 
-    SDL_Rect playerRect;
-    playerRect.w = 512/64;
-    playerRect.h = 512/64;
-    playerRect.x = resW/4 - playerRect.w/2;  
-    playerRect.y = resH/2 - playerRect.h/2;  
+    mainChar.playerRect.w = 512/64;
+    mainChar.playerRect.h = 512/64;
+    mainChar.playerRect.x = resW/4 - mainChar.playerRect.w/2;  
+    mainChar.playerRect.y = resH/2 - mainChar.playerRect.h/2;  
+
+
     
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
@@ -68,17 +69,17 @@ int main(int argc, char const *argv[]) {
         handleEvent( &appIsRunning, &upArrowDown, &downArrowDown, &leftArrowDown, &rightArrowDown);
 
         // Handle movement of character
-        movePlayer(&playerRect, resW, resH, upArrowDown, downArrowDown, leftArrowDown, rightArrowDown);
+        mainChar.movePlayer(resW, resH, upArrowDown, downArrowDown, leftArrowDown, rightArrowDown);
         
         // Function to draw the 2d Map
         drawMap2D(renderer);
 
         // Draw the 3D raycast
-        drawRays3D(&playerRect, renderer);       
+        drawRays3D(&mainChar.playerRect, renderer);       
 
         // Draw Our Player
         SDL_SetRenderDrawColor(renderer, 255, 105, 180, SDL_ALPHA_OPAQUE);
-        SDL_RenderFillRect(renderer, &playerRect);
+        SDL_RenderFillRect(renderer, &mainChar.playerRect);
         
         //  Draw Others 
         // To do: create server logic for this so I can update other players
