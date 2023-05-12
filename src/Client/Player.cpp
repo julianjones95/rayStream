@@ -1,4 +1,4 @@
-// Client side C program to demonstrate Socket programming using SOCK_DGRAM
+#include <math.h>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -8,18 +8,15 @@
 #include <unistd.h>
 #include <SDL.h>
 #include "variables.h"
+#include "Player.h"
 
-
-struct Data {
-    float x;
-    float y;
-    float angle;
-    float direction;
-};
+#define PI 3.14259265
 
 #define PORT 8080
 
-int sendPlayerData(SDL_Rect *playerRect, bool inc, bool dec, float * angle, bool direction) {
+
+int Player::sendPlayerData(bool inc, bool dec, float * angle, bool direction) {
+
     int socket_fd;
     struct sockaddr_in serv_addr;
     
@@ -58,10 +55,44 @@ int sendPlayerData(SDL_Rect *playerRect, bool inc, bool dec, float * angle, bool
     int valread = recvfrom(socket_fd, &response, 1024, 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
     //printf("Rec resp:\n x = %f\n y = %f\n", response.x, response.y);
 
-    playerRect->x = response.x;
-    playerRect->y = response.y;
+    playerRect.x = response.x;
+    playerRect.y = response.y;
     *angle = response.angle;
     close(socket_fd);
 
     return 0;
+}
+
+
+
+
+void Player::movePlayer (int resW, int resH, bool upArrowDown, bool downArrowDown, bool leftArrowDown, bool rightArrowDown) {
+    // Movement Logic    
+    if (upArrowDown) {
+        sendPlayerData(true,false,&angle,false);
+    }
+    if (downArrowDown) {
+        sendPlayerData(false,true,&angle,false);
+    }
+    if (leftArrowDown) {
+        sendPlayerData(false,false,&angle,true);
+    }
+    if (rightArrowDown) {
+        sendPlayerData(false,false,&angle,false);
+    }
+
+    // Bound checking
+    if (playerRect.x < 0) {
+        playerRect.x = 0;
+    }
+    else if (playerRect.x + playerRect.w - 1 >= resW) {
+        playerRect.x = resW - playerRect.w;
+    }
+    if (playerRect.y < 0) {
+        playerRect.y = 0;
+    }
+    else if (playerRect.y + playerRect.h - 1 >= resH) {
+        playerRect.y = resH - playerRect.h;
+    }
+
 }
