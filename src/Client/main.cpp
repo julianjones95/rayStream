@@ -5,8 +5,7 @@
 #include "Player.h"
 #include "variables.h"
 #include "drawRays3D.h"
-#include "drawMap.h"
-#include "drawOtherPlayers.h"
+#include "draw2D.h"
 #define PI 3.14259265
 #define Rad PI/1440 //This is actually an eigth radian
 
@@ -50,6 +49,8 @@ int main(int argc, char const *argv[]) {
         return 1;
     }
     
+    draw2D mapScreen;
+
     // Create the renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -72,7 +73,7 @@ int main(int argc, char const *argv[]) {
         mainChar.movePlayer(resW, resH, upArrowDown, downArrowDown, leftArrowDown, rightArrowDown);
         
         // Function to draw the 2d Map
-        drawMap2D(renderer);
+        mapScreen.Map(renderer);
 
         // Draw the 3D raycast
         drawRays3D(&mainChar.playerRect, renderer);       
