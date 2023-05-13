@@ -150,6 +150,3 @@ void drawRays3D(SDL_Rect *playerRect, SDL_Renderer *renderer){
     }
 
 }
-
-
-

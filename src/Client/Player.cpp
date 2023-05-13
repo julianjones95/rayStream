@@ -81,18 +81,4 @@ void Player::movePlayer (int resW, int resH, bool upArrowDown, bool downArrowDow
         sendPlayerData(false,false,&angle,false);
     }
 
-    // Bound checking
-    if (playerRect.x < 0) {
-        playerRect.x = 0;
-    }
-    else if (playerRect.x + playerRect.w - 1 >= resW) {
-        playerRect.x = resW - playerRect.w;
-    }
-    if (playerRect.y < 0) {
-        playerRect.y = 0;
-    }
-    else if (playerRect.y + playerRect.h - 1 >= resH) {
-        playerRect.y = resH - playerRect.h;
-    }
-
 }

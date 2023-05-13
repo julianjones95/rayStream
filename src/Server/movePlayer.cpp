@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <math.h>
+#include <iostream>
 #define PI 3.14159265
 
 struct Data {
@@ -11,8 +12,32 @@ struct Data {
     float direction;
 };
 
-float positionX = 0;
-float positionY = 0;
+ int map[] = {
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,1,1,0,0,2,0,0,0,0,0,0,0,0,1,
+    1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,1,0,0,1,1,0,0,0,0,0,1,
+    1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,1,
+    1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+
+};
+
+
+float positionX = 216, positionY = 216;
+int resWidth = 512, resHeight = 512;
+int playerWidth = resWidth/64, playerHeight = resHeight/64;
+int squareLength =32;
+
 int pdx =1, pdy =1;
 float angle;
 
@@ -48,14 +73,66 @@ void movePlayer(int socket_fd, int addrlen) {
             pdx = cos(angle)*5;
             pdy = sin(angle)*5;
         }
+        
+        int x = positionX/32 +1;
+        int y = positionY/32 +1;
 
-        // Send response to client
+        // Wall Checking
+        if(map[y*16 + x-1]==1) {
+            //std::cout << x << "," << y << "below" << std::endl;
+            if (positionY  > y*squareLength -8) {
+                positionY = y*squareLength -8;
+            }
+        } 
+        if(map[(y-1)*16 + x-1 ]==1) {
+            // std::cout << x << "," << y << "above" << std::endl;
+            if (positionY < y*squareLength ) {
+                positionY = y*squareLength +1 ;
+            }
+        }  
+        if(map[(y-1)*16 + x]==1) {
+            //std::cout << x*squareLength << "," << positionX << "right" << std::endl;
+            if (positionX > x*squareLength-8 ) {
+                positionX = x*squareLength-8;
+            }
 
+        }
+
+        // To do (easy first bug): 
+        // Strange behaviour if you approach a wall on the wall's right
+        // side ( approaching from the left ) . I call it the "teleport
+        // you will move very quickly downward. This is probably due to
+        // you hitting one of the rules above and being moved.
+        if(map[(y-1)*16 + x-1]==1) {
+            //std::cout << x << "," << y << "left Bound" << std::endl;
+            if (positionX < x*squareLength-9) {
+                positionX = x*squareLength-9;
+            }
+
+        }
+        
+        // OOB Bound checking
+        if (positionX< squareLength){
+            positionX = squareLength;
+        }
+        else if (positionX + playerWidth + squareLength - 1 >= resWidth) {
+            positionX = resWidth - playerWidth - squareLength;
+        }
+        if (positionY < squareLength) {
+            positionY = squareLength;
+        }
+        else if (positionY + playerHeight + squareLength - 1 >= resHeight) {
+            positionY = resHeight - playerHeight - squareLength;
+        }
+
+
+        // Initialize response variables
         struct Data response;
         response.x = positionX; 
         response.y = positionY;
         response.angle = angle;
 
+        // Send response back to client
         struct sockaddr_in client_address = *((struct sockaddr_in *)&address);
         int client_address_len = sizeof(client_address);
         sendto(socket_fd, &response, sizeof(response), 0, (struct sockaddr *)&client_address, client_address_len);
