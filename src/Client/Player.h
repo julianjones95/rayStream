@@ -6,6 +6,7 @@ public:
     SDL_Rect playerRect;
 
     struct Data {
+        int id;
         float x;
         float y;
         float angle;

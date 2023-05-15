@@ -10,6 +10,8 @@
 #include "variables.h"
 #include "Player.h"
 
+int playerId;
+
 #define PI 3.14259265
 
 #define PORT 8080
@@ -39,6 +41,7 @@ int Player::sendPlayerData(bool inc, bool dec, float * angle, bool direction) {
         return -1;
     }
 
+    data.id = playerId; 
     data.x = inc;
     data.y = dec;
     data.direction = direction;
@@ -54,7 +57,8 @@ int Player::sendPlayerData(bool inc, bool dec, float * angle, bool direction) {
     // Receieve response from server
     int valread = recvfrom(socket_fd, &response, 1024, 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
     //printf("Rec resp:\n x = %f\n y = %f\n", response.x, response.y);
-
+    
+    playerId = response.id;
     playerRect.x = response.x;
     playerRect.y = response.y;
     *angle = response.angle;
