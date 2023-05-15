@@ -6,11 +6,36 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <math.h>
+#include <vector>
+using std::vector;
+
 
 extern float positionX;
 extern float positionY;
 extern int pdx, pdy;
 extern float angle;
 
-void movePlayer(int ,int);
+struct Data {
+    int id;
+    float x;
+    float y;
+    float angle;
+    float direction;
+};
+
+class Player {
+    public:
+    int id;
+    float positionX;
+    float positionY;
+    float angle;
+
+    vector<Player> playerVector;
+
+    void movePlayer(int socket_fd, int addrlen);
+
+};
+
+
+
 

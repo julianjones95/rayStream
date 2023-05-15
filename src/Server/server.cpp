@@ -33,7 +33,8 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    movePlayer(socket_fd, addrlen);
+    Player currentPlayer;
+    currentPlayer.movePlayer(socket_fd, addrlen);
 
     return 0;
 }
