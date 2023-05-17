@@ -34,6 +34,9 @@ class Player {
 
     void movePlayer(int socket_fd, int addrlen);
 
+    void sendPlayerVector(int socket_fd, int addrlen);
+
+
 };
 
 

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <iostream>
 #include <netinet/in.h>
 #include "movePlayer.h"
 
@@ -34,8 +35,23 @@ int main(int argc, char const *argv[]) {
     }
 
     Player currentPlayer;
-    currentPlayer.movePlayer(socket_fd, addrlen);
 
+    // Get data to choose which server action to run
+    int decision;
+
+    while(1) {
+
+        int valread = recvfrom(socket_fd, &decision, sizeof(decision), MSG_WAITALL, (struct sockaddr *) &address, (socklen_t*) &addrlen);
+        
+        if(decision ==1){
+            currentPlayer.movePlayer(socket_fd, addrlen);
+            
+        }
+        else{
+            currentPlayer.sendPlayerVector(socket_fd,addrlen);
+            std::cout<< "checking other player moves" << std::endl; 
+        }
+    }
     return 0;
 }
 
