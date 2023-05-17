@@ -1,20 +1,30 @@
 #pragma once
 #include <SDL.h>
+#include <vector>
+
+using std::vector;
+
+struct Data {
+    int id;
+    float x;
+    float y;
+    float angle;
+    float direction;
+};
+
 
 class Player {
-public:
+    public:
     SDL_Rect playerRect;
 
-    struct Data {
-        int id;
-        float x;
-        float y;
-        float angle;
-        float direction;
-    };
+    vector<Data> playerVector;
 
     int sendPlayerData(bool inc, bool dec, float* angle, bool direction);
 
-    void movePlayer(int resW, int resH, bool upArrowDown, bool downArrowDown, bool leftArrowDown, bool rightArrowDown);
+    void movePlayer(bool upArrowDown, bool downArrowDown, bool leftArrowDown, bool rightArrowDown);
+
+    int getPlayerVector();
+
+
 };
 

@@ -18,8 +18,6 @@ int main(int argc, char const *argv[]) {
     mainChar.playerRect.h = 512/64;
     mainChar.playerRect.x = resW/4 - mainChar.playerRect.w/2;  
     mainChar.playerRect.y = resH/2 - mainChar.playerRect.h/2;  
-
-
     
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
@@ -70,8 +68,10 @@ int main(int argc, char const *argv[]) {
         handleEvent( &appIsRunning, &upArrowDown, &downArrowDown, &leftArrowDown, &rightArrowDown);
 
         // Handle movement of character
-        mainChar.movePlayer(resW, resH, upArrowDown, downArrowDown, leftArrowDown, rightArrowDown);
-        
+        mainChar.movePlayer(upArrowDown, downArrowDown, leftArrowDown, rightArrowDown);
+  
+        mainChar.getPlayerVector();
+
         // Function to draw the 2d Map
         mapScreen.Map(renderer);
 
@@ -82,11 +82,7 @@ int main(int argc, char const *argv[]) {
         SDL_SetRenderDrawColor(renderer, 255, 105, 180, SDL_ALPHA_OPAQUE);
         SDL_RenderFillRect(renderer, &mainChar.playerRect);
         
-        //  Draw Others 
-        // To do: create server logic for this so I can update other players
-        // in realtime.
-        //
-//        drawOtherPlayers(renderer);
+//        mapScreen.otherPlayers(renderer);
         SDL_RenderPresent(renderer);
         
     }
