@@ -63,7 +63,7 @@ int Player::sendPlayerData(bool inc, bool dec, float * angle, bool direction) {
     int server_address_len = sizeof(serv_addr);
 
     // Receieve response from server
-    int valread = recvfrom(socket_fd, &response, 1024, 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
+    int valread = recvfrom(socket_fd, &response, sizeof(response), 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
     //printf("Rec resp:\n x = %f\n y = %f\n", response.x, response.y);
     
     // Append response data to player object
@@ -98,25 +98,24 @@ int Player::getPlayerVector() {
         return -1;
     }
     
-    int decision = 0;
-    // Send ddecision data to server here
-    // This tells the server to process move data
+    int decision = 2;
+    // Send decision data to server here
+    // This tells the server to send other player data
     sendto(socket_fd, &decision, sizeof(decision), 0, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
 
-    int testData = 12;
+    int testData = 69;
 
     sendto(socket_fd, &testData, sizeof(testData), 0, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
 
     int server_address_len = sizeof(serv_addr);
 
-
     int rowsPlayerVect;
     // Get the number of rows to recv from server
-    int valread = recvfrom(socket_fd, &rowsPlayerVect, 1024, 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
- 
+    int valread = recvfrom(socket_fd, &rowsPlayerVect, sizeof(rowsPlayerVect), 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
+
+    
   
     for(int i=1; i<rowsPlayerVect; i++){
-        std::cout << "num of rows" << rowsPlayerVect << std::endl;
 
         struct Data pVrow;
     
@@ -136,8 +135,6 @@ int Player::getPlayerVector() {
         std::cout << "player ID: " << pVrow.id << "X: " << pVrow.x << "Y: " << pVrow.y << std::endl; 
  
     }
-//    for(int i=0; i<playerVector.size(); i++)
-//        std::cout << " rcvd other, players ids: " << playerVector[i].id << std::endl;
 
     close(socket_fd);
 

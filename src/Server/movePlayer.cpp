@@ -104,9 +104,9 @@ void Player::movePlayer(int socket_fd, int addrlen) {
     }
 
     // To do (easy first bug): 
-    // Strange behaviour if you approach a wall on the wall's right
-    // side ( approaching from the left ) . I call it the "teleport
-    // you will move very quickly downward. This is probably due to
+    // Strange behaviour if you approach the left bounding 
+    // wall on the wall's right  . You will perform the "teleport" move
+    // ie: you will move very quickly downward. This is probably due to
     // you hitting one of the rules above and being moved.
     if(map[(y-1)*16 + x-1]==1) {
         //std::cout << x << "," << y << "left Bound" << std::endl;
@@ -148,24 +148,22 @@ void Player::movePlayer(int socket_fd, int addrlen) {
 
 void Player::sendPlayerVector(int socket_fd, int addrlen) {
 
-        std::cout << "running Server" << std::endl;
         int testData;
         int valread = recvfrom(socket_fd, &testData, sizeof(testData), MSG_WAITALL, (struct sockaddr *) &address, (socklen_t*) &addrlen);
 
-        std::cout << "rcvd data"<< testData << std::endl;
-
-        // Send player vector to client
+        // Initialize variables to send to client
         struct sockaddr_in client_address = *((struct sockaddr_in *)&address);
         int client_address_len = sizeof(client_address);
-
         int rowsPlayerVect = playerVector.size();
 
+        // Send # of rows of playerVector to client
+        // This can segfault because 2nd client can send an int
+        // When this is expecting a variable of type Data  
         sendto(socket_fd, &rowsPlayerVect, sizeof(rowsPlayerVect), 0, (struct sockaddr *)&client_address, client_address_len);
 
-
+    
+        // Loop through rows and send all of them to the client
         for(int i=1; i<playerVector.size(); i++){
-            std::cout << "sent data, playerVector ids: " << playerVector[i].id << std::endl;
-            
             // Initialize the playerVector row to send the data to the client
             struct Data pVrow;
             pVrow.id = i;
@@ -174,6 +172,6 @@ void Player::sendPlayerVector(int socket_fd, int addrlen) {
             pVrow.angle = playerVector[i].angle;
             sendto(socket_fd, &pVrow, sizeof(pVrow), 0, (struct sockaddr *)&client_address, client_address_len);
         }
-
+    
 }
 

@@ -58,6 +58,7 @@ int main(int argc, char const *argv[]) {
         return 1;
     }
 
+    int countFrame =0;
     // Runs the main game frames
     while (appIsRunning) {
 
@@ -69,8 +70,15 @@ int main(int argc, char const *argv[]) {
 
         // Handle movement of character
         mainChar.movePlayer(upArrowDown, downArrowDown, leftArrowDown, rightArrowDown);
-  
-        mainChar.getPlayerVector();
+       
+        // This is a workaround to fix the simultaneous players bug
+        // By running every N frames we reduce the chance of a collision
+        // by whatever N is in the below equation. This should be fixed.. 
+        // . . . eventually :)
+        if (countFrame % 20 == 0) {
+            mainChar.getPlayerVector();
+        } 
+        countFrame++;
 
         // Function to draw the 2d Map
         mapScreen.Map(renderer);

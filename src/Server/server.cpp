@@ -47,9 +47,8 @@ int main(int argc, char const *argv[]) {
             currentPlayer.movePlayer(socket_fd, addrlen);
             
         }
-        else{
+        else if(decision == 2){
             currentPlayer.sendPlayerVector(socket_fd,addrlen);
-            std::cout<< "checking other player moves" << std::endl; 
         }
     }
     return 0;
