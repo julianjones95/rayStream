@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <netinet/in.h>
-#include "movePlayer.h"
+#include "Player.h"
 
 #define PI 3.14159265
 #define PORT 8080

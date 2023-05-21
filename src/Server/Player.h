@@ -15,6 +15,7 @@ extern float positionY;
 extern int pdx, pdy;
 extern float angle;
 
+
 struct Data {
     int id;
     float x;
@@ -31,6 +32,8 @@ class Player {
     float angle;
 
     vector<Player> playerVector;
+
+    void checkMovement(float, float, float, vector <Player> *  , int);
 
     void movePlayer(int socket_fd, int addrlen);
 

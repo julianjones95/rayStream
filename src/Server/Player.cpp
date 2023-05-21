@@ -4,7 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <iostream>
-#include "movePlayer.h"
+#include "Player.h"
 using std::vector;
 
 #define PI 3.14159265
@@ -39,6 +39,33 @@ float angle;
 
 struct sockaddr_in address;
 
+void Player::checkMovement(float x, float y, float direction, vector <Player>* Vector, int id ) {
+
+    // Movement Logic    
+    if (x==1 && y==0) {
+        (*Vector)[id].positionX += pdx;
+        (*Vector)[id].positionY += pdy;
+    }
+    if (x==0 && y==1) {
+        (*Vector)[id].positionX -= pdx;
+        (*Vector)[id].positionY -= pdy;
+    }
+    if (x==0 && y==0 && direction == true) {
+        (*Vector)[id].angle -= PI/32;
+        if((*Vector)[id].angle<0){ (*Vector)[id].angle += 2*PI; };
+        pdx = cos((*Vector)[id].angle)*5;
+        pdy = sin((*Vector)[id].angle)*5;
+    }
+    if (x==0 && y==0 && direction == false) {
+        (*Vector)[id].angle += PI/32;
+        if((*Vector)[id].angle>2*PI){ (*Vector)[id].angle -= 2*PI; };
+        pdx = cos((*Vector)[id].angle)*5;
+        pdy = sin((*Vector)[id].angle)*5;
+    }
+
+}
+
+
 void Player::movePlayer(int socket_fd, int addrlen) {
 
     struct Data data;
@@ -57,28 +84,8 @@ void Player::movePlayer(int socket_fd, int addrlen) {
         currentPlayer.id = data.id;
     }
 
-    // Movement Logic    
-    if (data.x==1 && data.y==0) {
-        playerVector[currentPlayer.id].positionX += pdx;
-        playerVector[currentPlayer.id].positionY += pdy;
-    }
-    if (data.x==0 && data.y==1) {
-        playerVector[currentPlayer.id].positionX -= pdx;
-        playerVector[currentPlayer.id].positionY -= pdy;
-    }
-    if (data.x==0 && data.y==0 && data.direction == true) {
-        playerVector[currentPlayer.id].angle -= PI/32;
-        if(playerVector[currentPlayer.id].angle<0){ playerVector[currentPlayer.id].angle += 2*PI; };
-        pdx = cos(playerVector[currentPlayer.id].angle)*5;
-        pdy = sin(playerVector[currentPlayer.id].angle)*5;
-    }
-    if (data.x==0 && data.y==0 && data.direction == false) {
-        playerVector[currentPlayer.id].angle += PI/32;
-        if(playerVector[currentPlayer.id].angle>2*PI){ playerVector[currentPlayer.id].angle -= 2*PI; };
-        pdx = cos(playerVector[currentPlayer.id].angle)*5;
-        pdy = sin(playerVector[currentPlayer.id].angle)*5;
-    }
-    
+    checkMovement(data.x, data.y, data.direction, &playerVector, currentPlayer.id);
+
     int x = playerVector[currentPlayer.id].positionX/32 +1;
     int y = playerVector[currentPlayer.id].positionY/32 +1;
 
@@ -148,30 +155,30 @@ void Player::movePlayer(int socket_fd, int addrlen) {
 
 void Player::sendPlayerVector(int socket_fd, int addrlen) {
 
-        int testData;
-        int valread = recvfrom(socket_fd, &testData, sizeof(testData), MSG_WAITALL, (struct sockaddr *) &address, (socklen_t*) &addrlen);
+    int testData;
+    int valread = recvfrom(socket_fd, &testData, sizeof(testData), MSG_WAITALL, (struct sockaddr *) &address, (socklen_t*) &addrlen);
 
-        // Initialize variables to send to client
-        struct sockaddr_in client_address = *((struct sockaddr_in *)&address);
-        int client_address_len = sizeof(client_address);
-        int rowsPlayerVect = playerVector.size();
+    // Initialize variables to send to client
+    struct sockaddr_in client_address = *((struct sockaddr_in *)&address);
+    int client_address_len = sizeof(client_address);
+    int rowsPlayerVect = playerVector.size();
 
-        // Send # of rows of playerVector to client
-        // This can segfault because 2nd client can send an int
-        // When this is expecting a variable of type Data  
-        sendto(socket_fd, &rowsPlayerVect, sizeof(rowsPlayerVect), 0, (struct sockaddr *)&client_address, client_address_len);
+    // Send # of rows of playerVector to client
+    // This can segfault because 2nd client can send an int
+    // When this is expecting a variable of type Data  
+    sendto(socket_fd, &rowsPlayerVect, sizeof(rowsPlayerVect), 0, (struct sockaddr *)&client_address, client_address_len);
 
-    
-        // Loop through rows and send all of them to the client
-        for(int i=1; i<playerVector.size(); i++){
-            // Initialize the playerVector row to send the data to the client
-            struct Data pVrow;
-            pVrow.id = i;
-            pVrow.x = playerVector[i].positionX;
-            pVrow.y = playerVector[i].positionY;
-            pVrow.angle = playerVector[i].angle;
-            sendto(socket_fd, &pVrow, sizeof(pVrow), 0, (struct sockaddr *)&client_address, client_address_len);
-        }
+
+    // Loop through rows and send all of them to the client
+    for(int i=1; i<playerVector.size(); i++){
+        // Initialize the playerVector row to send the data to the client
+        struct Data pVrow;
+        pVrow.id = i;
+        pVrow.x = playerVector[i].positionX;
+        pVrow.y = playerVector[i].positionY;
+        pVrow.angle = playerVector[i].angle;
+        sendto(socket_fd, &pVrow, sizeof(pVrow), 0, (struct sockaddr *)&client_address, client_address_len);
+    }
     
 }
 
