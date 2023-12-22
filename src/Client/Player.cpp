@@ -23,7 +23,7 @@ int Player::sendPlayerData(bool inc, bool dec, float * angle, bool direction) {
     int socket_fd;
     struct sockaddr_in serv_addr;
     
-    struct Data data;
+    struct MovementData data;
 
     // Creating socket file descriptor
     if ((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -42,10 +42,14 @@ int Player::sendPlayerData(bool inc, bool dec, float * angle, bool direction) {
         return -1;
     }
 
-    int decision = 1;
-    // Send ddecision data to server here
-    // This tells the server to process move data
-    sendto(socket_fd, &decision, sizeof(decision), 0, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
+    int shouldServerProcessMoveData = 1;
+
+    sendto(socket_fd,
+           &shouldServerProcessMoveData,
+           sizeof(shouldServerProcessMoveData),
+           0,
+           (struct sockaddr *) &serv_addr,
+           sizeof(serv_addr));
 
 
 
@@ -56,15 +60,28 @@ int Player::sendPlayerData(bool inc, bool dec, float * angle, bool direction) {
     data.direction = direction;
 
     // Send data to server here
-    sendto(socket_fd, &data, sizeof(data), 0, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
+    sendto(
+        socket_fd, 
+        &data, 
+        sizeof(data), 
+        0, 
+        (struct sockaddr *) &serv_addr, 
+        sizeof(serv_addr)
+    );
 
     // Initialize Response variable
-    struct Data response;
+    struct MovementData response;
     int server_address_len = sizeof(serv_addr);
 
     // Receieve response from server
-    int valread = recvfrom(socket_fd, &response, sizeof(response), 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
-    //printf("Rec resp:\n x = %f\n y = %f\n", response.x, response.y);
+    recvfrom(
+        socket_fd, 
+        &response, 
+        sizeof(response), 
+        0, 
+        (struct sockaddr *)&serv_addr, 
+        (socklen_t*)&server_address_len
+    );
     
     // Append response data to player object
     playerId = response.id;
@@ -98,10 +115,16 @@ int Player::getPlayerVector() {
         return -1;
     }
     
-    int decision = 2;
-    // Send decision data to server here
-    // This tells the server to send other player data
-    sendto(socket_fd, &decision, sizeof(decision), 0, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
+    int shouldServerProcessMoveData = 2;
+
+    sendto(
+        socket_fd,
+        &shouldServerProcessMoveData,
+        sizeof(shouldServerProcessMoveData),
+        0,
+        (struct sockaddr *) &serv_addr,
+        sizeof(serv_addr)
+    );
 
     int testData = 69;
 
@@ -111,28 +134,34 @@ int Player::getPlayerVector() {
 
     int rowsPlayerVect;
     // Get the number of rows to recv from server
-    int valread = recvfrom(socket_fd, &rowsPlayerVect, sizeof(rowsPlayerVect), 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
+    recvfrom(
+        socket_fd,
+        &rowsPlayerVect,
+        sizeof(rowsPlayerVect),
+        0,
+        (struct sockaddr *)&serv_addr,
+        (socklen_t*)&server_address_len
+    );
 
-    
-  
-    for(int i=1; i<rowsPlayerVect; i++){
+        for(int i=1; i<rowsPlayerVect; i++){
 
-        struct Data pVrow;
+        struct MovementData pVrow;
     
         // Receieve response from server
-        int valread = recvfrom(socket_fd, &pVrow, 1024, 0, (struct sockaddr *)&serv_addr, (socklen_t*)&server_address_len);
+        recvfrom(
+            socket_fd,
+            &pVrow, 1024,
+            0,
+            (struct sockaddr *)&serv_addr,
+            (socklen_t*)&server_address_len
+        );
         
-        // playerVector.push_back(pVrow); 
-
-        // Note for next commit:
-        // This implementation works as intended.
-        // We get the info from the server iteratively
-        // then print it to the screen. However this does 
-        // not dynamically save to our playerVector. 
-        // We also have a bug where 2 players cannot join
-        // simultaneously. I believe it is to do with our 
-        // 2 server methods clashing and causing a segfault.
-        std::cout << "player ID: " << pVrow.id << "X: " << pVrow.x << "Y: " << pVrow.y << std::endl; 
+        std::cout 
+            << "player ID: " 
+            << pVrow.id << "X: " 
+            << pVrow.x  << "Y: " 
+            << pVrow.y  << 
+            std::endl; 
  
     }
 
@@ -141,10 +170,10 @@ int Player::getPlayerVector() {
     return 0;
 }
 
-
-
-void Player::movePlayer (bool upArrowDown, bool downArrowDown, bool leftArrowDown, bool rightArrowDown) {
-    // Movement Logic    
+void Player::movePlayer (bool upArrowDown,
+                         bool downArrowDown,
+                         bool leftArrowDown,
+                         bool rightArrowDown) {
     if (upArrowDown) {
         sendPlayerData(true,false,&angle,false);
     }

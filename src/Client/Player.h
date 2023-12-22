@@ -4,7 +4,7 @@
 
 using std::vector;
 
-struct Data {
+struct MovementData {
     int id;
     float x;
     float y;
@@ -17,7 +17,7 @@ class Player {
     public:
     SDL_Rect playerRect;
 
-    vector<Data> playerVector;
+    vector<MovementData> playerVector;
 
     int sendPlayerData(bool inc, bool dec, float* angle, bool direction);
 
